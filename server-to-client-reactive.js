@@ -1,4 +1,3 @@
-notifications = new Meteor.Stream('server-notifications');
 
 if (Meteor.isClient) {
   //create a client only collection
