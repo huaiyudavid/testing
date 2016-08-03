@@ -5,7 +5,9 @@ if (Meteor.isClient) {
   notificationCollection = new Meteor.Collection(null);
 
   //listen to the stream and add to the collection
-  notifications.on('message', function(message, time) {
+  serverEvents.on('message', function(event) {
+    var message = event.memo.message;
+    var time = event.memo.time;
     notificationCollection.insert({
       message: message,
       time: time
@@ -33,14 +35,10 @@ if (Meteor.isClient) {
 }
 
 if (Meteor.isServer) {
-  //allow any connected client to listen on the stream
-  notifications.permissions.read(function(userId, eventName) {
-    return true;
-  });
 
   //notify clients with a message per every second
   setInterval(function() {
-    notifications.emit('message', 'Server Generated Message', Date.now());
+    serverEvents.triggerEvent("message", {message: 'Server Generated Message', time: Date.now()});
     console.log('sent message');
     console.log(Date.now().toString());
   }, 1000);
